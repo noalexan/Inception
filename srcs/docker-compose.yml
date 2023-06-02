@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  nginx:
+    build: requirements/nginx
+    ports: [ 443:443 ]
+    volumes: [ public:/wordpress ]
+    depends_on: [ wordpress ]
+    restart: always
+
+  wordpress:
+    build: requirements/wordpress
+    volumes: [ public:/wordpress ]
+    restart: always
+
+  mariadb:
+    build: requirements/mariadb
+    restart: always
+
+volumes:
+  public:
