@@ -24,6 +24,7 @@ services:
   adminer:
     image: adminer
     networks: [ default ]
+    ports: [ 8080:8080 ]
     depends_on: [ mariadb ]
     restart: always
 
