@@ -4,6 +4,7 @@ services:
 
   nginx:
     build: requirements/nginx
+    networks: [ default ]
     ports: [ 443:443 ]
     volumes: [ public:/wordpress ]
     depends_on: [ wordpress ]
@@ -11,12 +12,24 @@ services:
 
   wordpress:
     build: requirements/wordpress
+    networks: [ default ]
     volumes: [ public:/wordpress ]
     restart: always
 
   mariadb:
     build: requirements/mariadb
+    networks: [ default ]
+    restart: always
+
+  adminer:
+    image: adminer
+    networks: [ default ]
+    depends_on: [ mariadb ]
     restart: always
 
 volumes:
   public:
+
+networks:
+  default:
+    driver: bridge
