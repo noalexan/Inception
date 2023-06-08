@@ -6,19 +6,22 @@ services:
     build: requirements/nginx
     networks: [ default ]
     ports: [ 443:443 ]
-    volumes: [ public:/wordpress ]
+    volumes: [ wordpress-data:/wordpress ]
     depends_on: [ wordpress ]
+    env_file: [ .env ]
     restart: always
 
   wordpress:
     build: requirements/wordpress
     networks: [ default ]
-    volumes: [ public:/wordpress ]
+    volumes: [ wordpress-data:/wordpress ]
     restart: always
 
   mariadb:
     build: requirements/mariadb
     networks: [ default ]
+    volumes: [ mariadb-data:/var/lib/mysql ]
+    env_file: [ .env ]
     restart: always
 
   adminer:
@@ -28,8 +31,34 @@ services:
     depends_on: [ mariadb ]
     restart: always
 
+  static:
+    build: requirements/static
+    networks: [ default ]
+    ports: [ 80:80 ]
+    env_file: [ .env ]
+    restart: always
+
+  ftp:
+    build: requirements/ftp
+    networks: [ default ]
+    ports: [ 21:21 ]
+    volumes: [ wordpress-data:/wordpress ]
+    depends_on: [ wordpress ]
+    restart: always
+
 volumes:
-  public:
+
+  wordpress-data:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/wordpress
+
+  mariadb-data:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/mariadb
 
 networks:
   default:
