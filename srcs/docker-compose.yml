@@ -3,53 +3,96 @@ version: '3'
 services:
 
   nginx:
-    build: requirements/nginx
-    networks: [ default ]
-    ports: [ 443:443 ]
-    volumes: [ ~/data/wordpress:/wordpress ]
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME}
-    depends_on: [ wordpress ]
+    build:
+      context: requirements/nginx
+      args:
+        - DOMAIN_NAME=${DOMAIN_NAME}
+        - CERTS_=${CERTS_}
+    volumes:
+      - wordpress-data:/wordpress
+    networks:
+      - default
+    ports:
+      - 443:443
+    depends_on:
+      - wordpress
     restart: always
 
   wordpress:
-    build: requirements/wordpress
-    networks: [ default ]
-    volumes: [ ~/data/wordpress:/wordpress ]
+    build:
+      context: requirements/wordpress
+    volumes:
+      - wordpress-data:/wordpress
+    networks:
+      - default
     restart: always
 
   mariadb:
-    build: requirements/mariadb
-    networks: [ default ]
-    volumes: [ ~/data/mariadb:/var/lib/mysql ]
+    build:
+      context: requirements/mariadb
+      args:
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - default
     restart: always
 
   adminer:
     image: adminer
-    networks: [ default ]
-    ports: [ 8080:8080 ]
-    depends_on: [ mariadb ]
+    networks:
+      - default
+    ports:
+      - 8080:8080
+    depends_on:
+      - mariadb
     restart: always
 
   static:
-    build: requirements/static
-    networks: [ default ]
-    ports: [ 80:80 ]
+    build:
+      context: requirements/static
+    networks:
+      - default
+    ports:
+      - 80:80
     restart: always
 
   ftp:
-    build: requirements/ftp
-    networks: [ default ]
-    ports: [ 21:21 ]
-    volumes: [ ~/data/wordpress:/wordpress ]
-    depends_on: [ wordpress ]
+    build:
+      context: requirements/ftp
+    networks:
+      - default
+    ports:
+      - 21:21
+    depends_on:
+      - wordpress
     restart: always
 
   deno:
-    build: requirements/deno
-    networks: [ default ]
-    ports: [ 8000:8000 ]
+    build:
+      context: requirements/deno
+    networks:
+      - default
+    ports:
+      - 8000:8000
     restart: always
+
+volumes:
+
+  wordpress-data:
+    driver_opts:
+      o: bind
+      type: none
+      device: ~/data/wordpress
+
+  mariadb-data:
+    driver_opts:
+      o: bind
+      type: none
+      device: ~/data/mariadb
 
 networks:
   default:
