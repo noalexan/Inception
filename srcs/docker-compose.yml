@@ -22,7 +22,9 @@ services:
     build:
       context: requirements/wordpress
     volumes:
-      - wordpress-data:/wordpress
+      - type: bind
+        source: /home/noah/data/wordpress
+        target: /wordpress
     networks:
       - default
     restart: always
@@ -85,14 +87,10 @@ volumes:
   wordpress-data:
     driver_opts:
       o: bind
-      type: none
-      device: ~/data/wordpress
 
   mariadb-data:
     driver_opts:
       o: bind
-      type: none
-      device: ~/data/mariadb
 
 networks:
   default:
