@@ -3,7 +3,7 @@ FROM alpine:3.16
 COPY tools/init.sql /
 
 RUN apk add --update --no-cache mariadb mariadb-client
-RUN mkdir /run/mysqld && chown -R mysql:mysql /run/mysqld
+RUN mkdir /run/mysqld && chown -R mysql:mysql /run/mysqld /var/lib/mysql
 RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
 RUN sed -i "s/^#bind-address/bind-address/" /etc/my.cnf.d/mariadb-server.cnf && \

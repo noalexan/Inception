@@ -1,3 +1,2 @@
 all:
-	docker compose -f srcs/docker-compose.yml up --build
-
+	docker compose --file srcs/docker-compose.yml up --build
