@@ -9,8 +9,8 @@ services:
       args:
         - DOMAIN_NAME=${DOMAIN_NAME}
         - CERTS_=${CERTS_}
-    # volumes:
-    #   - data-wordpress:/wordpress
+    volumes:
+      - data-wordpress:/wordpress
     networks:
       - default
     ports:
@@ -23,8 +23,8 @@ services:
     container_name: wordpress
     build:
       context: requirements/wordpress
-    # volumes:
-    #   - data-wordpress:/wordpress
+    volumes:
+      - data-wordpress:/wordpress
     networks:
       - default
     restart: always
@@ -38,67 +38,71 @@ services:
         - MYSQL_USER=${MYSQL_USER}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
         - MYSQL_DATABASE=${MYSQL_DATABASE}
-    # volumes:
-    #   - data-mariadb:/var/lib/mysql
+    volumes:
+      - data-mariadb:/var/lib/mysql
     networks:
       - default
     restart: always
 
-  # adminer:
-  #   image: adminer
-  #   networks:
-  #     - default
-  #   ports:
-  #     - 8080:8080
-  #   depends_on:
-  #     - mariadb
-  #   restart: always
+  adminer:
+    image: adminer
+    networks:
+      - default
+    ports:
+      - 8080:8080
+    depends_on:
+      - mariadb
+    restart: always
 
-  # static:
-  #   container_name: static
-  #   build:
-  #     context: requirements/static
-  #   networks:
-  #     - default
-  #   ports:
-  #     - 80:80
-  #   restart: always
+  static:
+    container_name: static
+    build:
+      context: requirements/static
+    networks:
+      - default
+    ports:
+      - 80:80
+    restart: always
 
-  # ftp:
-  #   container_name: ftp
-  #   build:
-  #     context: requirements/ftp
-  #   networks:
-  #     - default
-  #   ports:
-  #     - 21:21
-  #   depends_on:
-  #     - wordpress
-  #   restart: always
+  ftp:
+    container_name: ftp
+    build:
+      context: requirements/ftp
+    volumes:
+      - data-wordpress:/wordpress
+    networks:
+      - default
+    ports:
+      - 21:21
+    depends_on:
+      - wordpress
+    restart: always
 
-  # deno:
-  #   container_name: deno
-  #   build:
-  #     context: requirements/deno
-  #   networks:
-  #     - default
-  #   ports:
-  #     - 8000:8000
-  #   restart: always
+  deno:
+    container_name: deno
+    build:
+      context: requirements/deno
+    networks:
+      - default
+    ports:
+      - 8000:8000
+    restart: always
 
 volumes:
 
   data-wordpress:
+    driver: local
     driver_opts:
       o: bind
       type: none
-      device: /Users/noahalexandre/data/wordpress
+      device: ${HOME}/data/wordpress
 
   data-mariadb:
+    driver: local
     driver_opts:
       o: bind
       type: none
-      device: /Users/noahalexandre/data/mariadb
+      device: ${HOME}/data/mariadb
 
 networks:
   default:

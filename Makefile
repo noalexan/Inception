@@ -11,4 +11,3 @@ down:
 
 prune: down
 	docker system prune --all --force
-
