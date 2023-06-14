@@ -3,13 +3,14 @@ version: '3'
 services:
 
   nginx:
+    container_name: nginx
     build:
       context: requirements/nginx
       args:
         - DOMAIN_NAME=${DOMAIN_NAME}
         - CERTS_=${CERTS_}
-    volumes:
-      - wordpress-data:/wordpress
+    # volumes:
+    #   - data-wordpress:/wordpress
     networks:
       - default
     ports:
@@ -19,17 +20,17 @@ services:
     restart: always
 
   wordpress:
+    container_name: wordpress
     build:
       context: requirements/wordpress
-    volumes:
-      - type: bind
-        source: /home/noah/data/wordpress
-        target: /wordpress
+    # volumes:
+    #   - data-wordpress:/wordpress
     networks:
       - default
     restart: always
 
   mariadb:
+    container_name: mariadb
     build:
       context: requirements/mariadb
       args:
@@ -37,60 +38,67 @@ services:
         - MYSQL_USER=${MYSQL_USER}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
         - MYSQL_DATABASE=${MYSQL_DATABASE}
-    volumes:
-      - mariadb-data:/var/lib/mysql
+    # volumes:
+    #   - data-mariadb:/var/lib/mysql
     networks:
       - default
     restart: always
 
-  adminer:
-    image: adminer
-    networks:
-      - default
-    ports:
-      - 8080:8080
-    depends_on:
-      - mariadb
-    restart: always
+  # adminer:
+  #   image: adminer
+  #   networks:
+  #     - default
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - mariadb
+  #   restart: always
 
-  static:
-    build:
-      context: requirements/static
-    networks:
-      - default
-    ports:
-      - 80:80
-    restart: always
+  # static:
+  #   container_name: static
+  #   build:
+  #     context: requirements/static
+  #   networks:
+  #     - default
+  #   ports:
+  #     - 80:80
+  #   restart: always
 
-  ftp:
-    build:
-      context: requirements/ftp
-    networks:
-      - default
-    ports:
-      - 21:21
-    depends_on:
-      - wordpress
-    restart: always
+  # ftp:
+  #   container_name: ftp
+  #   build:
+  #     context: requirements/ftp
+  #   networks:
+  #     - default
+  #   ports:
+  #     - 21:21
+  #   depends_on:
+  #     - wordpress
+  #   restart: always
 
-  deno:
-    build:
-      context: requirements/deno
-    networks:
-      - default
-    ports:
-      - 8000:8000
-    restart: always
+  # deno:
+  #   container_name: deno
+  #   build:
+  #     context: requirements/deno
+  #   networks:
+  #     - default
+  #   ports:
+  #     - 8000:8000
+  #   restart: always
 
 volumes:
 
-  wordpress-data:
+  data-wordpress:
     driver_opts:
       o: bind
+      type: none
+      device: /Users/noahalexandre/data/wordpress
 
-  mariadb-data:
+  data-mariadb:
     driver_opts:
       o: bind
+      type: none
+      device: /Users/noahalexandre/data/mariadb
 
 networks:
   default:
