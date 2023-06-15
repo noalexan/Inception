@@ -74,15 +74,16 @@ services:
     networks:
       - default
     ports:
+      - 20:20
       - 21:21
     depends_on:
       - wordpress
     restart: always
 
-  deno:
-    container_name: deno
+  node:
+    container_name: node
     build:
-      context: requirements/deno
+      context: requirements/node
     networks:
       - default
     ports:
