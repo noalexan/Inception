@@ -45,6 +45,7 @@ services:
     restart: always
 
   adminer:
+    container_name: adminer
     image: adminer
     networks:
       - default
