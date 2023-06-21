@@ -11,3 +11,8 @@ down:
 
 prune: down
 	docker system prune --all --force
+
+remove-data: prune
+	# docker volume rm $(shell docker volume ls -q)
+	rm -rf ~/data
+	mkdir -p ~/data/wordpress ~/data/mariadb
