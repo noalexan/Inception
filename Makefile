@@ -1,9 +1,18 @@
 all: up
 
-up:
+~/data:
+	mkdir ~/data
+
+~/data/mariadb: ~/data
+	mkdir ~/data/mariadb
+
+~/data/wordpress: ~/data
+	mkdir ~/data/wordpress
+
+up: ~/data/mariadb ~/data/wordpress
 	docker compose --file srcs/docker-compose.yml up --build
 
-detach:
+detach: ~/data/mariadb ~/data/wordpress
 	docker compose --file srcs/docker-compose.yml up --build --detach
 
 down:
@@ -13,6 +22,6 @@ prune: down
 	docker system prune --all --force
 
 remove-data: prune
-	# docker volume rm $(shell docker volume ls -q)
 	rm -rf ~/data
-	mkdir -p ~/data/wordpress ~/data/mariadb
+
+.PHONY: all up detach down prune remove-data

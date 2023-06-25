@@ -27,7 +27,6 @@ services:
         - MYSQL_USER=${MYSQL_USER}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
         - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - REDIS_PASSWORD=${REDIS_PASSWORD}
     volumes:
       - data-wordpress:/wordpress
     networks:
@@ -62,22 +61,6 @@ services:
       - mariadb
     restart: always
 
-  ftp:
-    container_name: ftp
-    build:
-      context: requirements/ftp
-      args:
-        - FTP_USER=${FTP_USER}
-        - FTP_PASSWORD=${FTP_PASSWORD}
-    networks:
-      - default
-    ports:
-      - 20:20
-      - 21:21
-    volumes:
-      - data-wordpress:/wordpress
-    restart: always
-
   static:
     container_name: static
     build:
@@ -96,16 +79,6 @@ services:
       - default
     ports:
       - 8000:8000
-    restart: always
-
-  redis:
-    container_name: redis
-    build:
-      context: requirements/redis
-      args:
-        - REDIS_PASSWORD=${REDIS_PASSWORD}
-    networks:
-      - default
     restart: always
 
 volumes:
