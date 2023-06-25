@@ -1,5 +1,8 @@
 all: up
 
+/run/docker.sock:
+	sudo service docker start
+
 ~/data:
 	mkdir ~/data
 
@@ -9,13 +12,26 @@ all: up
 ~/data/wordpress: ~/data
 	mkdir ~/data/wordpress
 
-up: ~/data/mariadb ~/data/wordpress
+srcs/.env:
+	@echo > srcs/.env
+	@echo "# NGINX Setup" >> srcs/.env
+	@echo "DOMAIN_NAME=" >> srcs/.env
+	@echo "CERTS_=" >> srcs/.env
+	@echo "" >> srcs/.env
+	@echo "# MySQL Setup" >> srcs/.env
+	@echo "MYSQL_ROOT_PASSWORD=" >> srcs/.env
+	@echo "MYSQL_USER=" >> srcs/.env
+	@echo "MYSQL_PASSWORD=" >> srcs/.env
+	@echo "MYSQL_DATABASE=" >> srcs/.env
+	vim srcs/.env
+
+up: /run/docker.sock srcs/.env ~/data/mariadb ~/data/wordpress
 	docker compose --file srcs/docker-compose.yml up --build
 
-detach: ~/data/mariadb ~/data/wordpress
+detach: /run/docker.sock srcs/.env ~/data/mariadb ~/data/wordpress
 	docker compose --file srcs/docker-compose.yml up --build --detach
 
-down:
+down: /run/docker.sock
 	docker compose --file srcs/docker-compose.yml down
 
 prune: down
